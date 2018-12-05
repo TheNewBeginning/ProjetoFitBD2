@@ -1,0 +1,1 @@
+i:99 - ii:999 - INSERT INTO fit_academia.exercicio(descricao, cod_agenda_exer) VALUES (KK, 1);
