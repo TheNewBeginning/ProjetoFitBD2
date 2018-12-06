@@ -15,7 +15,6 @@ public class MainPrincipalTuplas {
 	private static StopWatch t = null;
 	private static int cont = 1000;
 	private static Connection con = null;
-private static  PreparedStatement stmtCon = null;
 	public static void main(String[] args) {
 		conectar = new ConexaoAdo();
 		t = new StopWatch();

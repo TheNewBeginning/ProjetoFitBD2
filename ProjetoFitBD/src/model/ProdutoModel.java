@@ -1,11 +1,12 @@
 package model;
 
+import objectTransferData.ObjectData;
+
 public class ProdutoModel {
 	private int cod_produto;
 	private String descricao;
 	private int quantidade;
-	
-	
+
 	public ProdutoModel() {
 		super();
 	}
@@ -16,14 +17,13 @@ public class ProdutoModel {
 		this.descricao = descricao;
 		this.quantidade = quantidade;
 	}
-	
+
 	public ProdutoModel(String descricao, int quantidade) {
 		super();
-		this.cod_produto = cod_produto;
 		this.descricao = descricao;
 		this.quantidade = quantidade;
 	}
-	
+
 	public int getCod_produto() {
 		return cod_produto;
 	}
@@ -48,12 +48,29 @@ public class ProdutoModel {
 		this.quantidade = quantidade;
 	}
 
+	public boolean checkAtributos() {
+		boolean check = false;
+		if (this.descricao.trim().equals("")) {
+			check = false;
+			ObjectData.SendToMsg("descrição está vazia por favor preencha");
+		} else {
+			check = true;
+		}
+
+		if (this.quantidade == 0 || this.quantidade < 0) {
+			check = false;
+			ObjectData.SendToMsg("A quantidade está vazia por favor preencha");
+
+		} else {
+			check = true;
+		}
+			return check;
+	}
 
 	@Override
 	public String toString() {
 		return "ProdutoModel [cod_produto=" + cod_produto + ", descricao=" + descricao + ", quantidade=" + quantidade
 				+ "]";
 	}
-	
-	
+
 }

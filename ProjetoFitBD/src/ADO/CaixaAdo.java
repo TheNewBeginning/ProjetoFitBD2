@@ -31,95 +31,99 @@ public class CaixaAdo {
 		 * RuntimeException("nome da marca está vazio ou incorreto!"); }
 		 */
 
-		String query = "INSERT INTO fit_academia.caixa("
-				+ "data_entrada, data_saida, valores_entrada, valores_saida) "
-				+ "VALUES (?, ?, ?, ?);";
+		String query = "INSERT INTO fit_academia.caixa(cod_caixa, data_entrada, data_saida, valores_entrada, va                                                                                                          lores_saida) "
+				+ "VALUES (?, ?, ?, ?, ?);";
 		try {
 			java.sql.PreparedStatement stmt = this.minhaConexao.getConexao().prepareStatement(query);
-			stmt.setString(1, caixa.getData_entrada());
-			stmt.setString(2, caixa.getData_saida());
-			stmt.setDouble(3, caixa.getValores_entrada());
-			stmt.setDouble(4, caixa.getValores_saida());
-			
+			stmt.setInt(1, caixa.getCod_caixa());
+			stmt.setString(2, caixa.getData_entrada());
+			stmt.setString(3, caixa.getData_saida());
+			stmt.setDouble(4, caixa.getValores_entrada());
+			stmt.setDouble(5, caixa.getValores_saida());
 			if (!stmt.execute()) {
-				this.mensagem = "Caixa inserido Com Sucesso!";
-				System.out.println(minhaConexao.getMsg());
+				this.mensagem = "caixa inserido com sucesso";
+				System.out.println("stmt: " + stmt);
 				check = true;
-			} else {
-				System.out.println(minhaConexao.getMsg());
-				this.mensagem = "Erro ao Inserir Caixa!";
-				check = false;
 			}
 			stmt.close();
 
 			// System.out.println(stmt);
 
 		} catch (SQLException e) {
-			ObjectData.SendToMsg("Erro ao inserir Produto");
+			ObjectData.SendToMsg(this.mensagem = "Erro de banco de dados ao inserir Caixa");
 		} finally {
 			minhaConexao.fecharConexao();
 		}
 		return check;
 	}
 
-	public boolean consultaPorNome(String nome){
-		String query = "Select nome_marca from servitel_system.marca where nome_marca = ?;";
-		ResultSet rs = null;
-		boolean check = false;
+	public CaixaModel consultaPorId(int id) {
+		String query = "SELECT cod_caixa,data_entrada, data_saida, valores_entrada, valores_saida FROM fit_academia.caixa where cod_caixa = ?;";
+		CaixaModel model = null;
 		try {
 			PreparedStatement stmt = this.minhaConexao.getConexao().prepareStatement(query);
-			stmt.setString(1, nome);
-			rs = stmt.executeQuery();
-			
-			if (rs.next()) {
-				this.mensagem = "Marca do Produdo já existe por favor insera outro";
-				System.out.println("entrou V");
-
-				check = true;
-				System.err.println("if" + check);
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			if (rs != null) {
+				if (rs.next()) {
+					if(rs.getRow() == 0) {
+						this.mensagem = "Nenhum Caixa Cadastrado";
+					}
+					model = new CaixaModel(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDouble(4),
+							rs.getDouble(5));
+					this.mensagem = "Marca do Produdo já existe por favor insera outro";
+					System.out.println("entrou V");
+				}
 			}
-			System.out.println("não passou no if:" + check);
 			stmt.close();
 
-		} catch (SQLException | RuntimeException ex) {
+		} catch (SQLException ex) {
 			ex.printStackTrace();
+			throw new RuntimeException(ex);
+
+		} finally {
+			minhaConexao.fecharConexao();
 		}
-		return check;
+		return model;
 	}
 
 	public List<CaixaModel> ConsultaTodos() {
-		String query = "SELECT cod_caixa, data_entrada, "
-				+ "data_saida, valores_entrada, valores_saida "
+		String query = "SELECT cod_caixa, data_entrada, " + "data_saida, valores_entrada, valores_saida "
 				+ "FROM fit_academia.caixa;";
 		CaixaModel caixaModel = null;
 		List<CaixaModel> caixaLista = new ArrayList<>();
 		try {
 			java.sql.PreparedStatement stmt = this.minhaConexao.getConexao().prepareStatement(query);
 			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				caixaModel = new CaixaModel();
-				caixaModel.setCod_caixa(rs.getInt(1));
-				caixaModel.setData_entrada(rs.getString(2));
-				caixaModel.setData_saida(rs.getString(3));
-				caixaModel.setValores_entrada(rs.getDouble(4));
-				caixaModel.setValores_saida(rs.getDouble(5));
-				caixaLista.add(caixaModel);
+			if (rs != null) {
+				while (rs.next()) {
+					caixaModel = new CaixaModel();
+					caixaModel.setCod_caixa(rs.getInt(1));
+					caixaModel.setData_entrada(rs.getString(2));
+					caixaModel.setData_saida(rs.getString(3));
+					caixaModel.setValores_entrada(rs.getDouble(4));
+					caixaModel.setValores_saida(rs.getDouble(5));
+					caixaLista.add(caixaModel);
+				}
+
+			} else {
+				this.mensagem = "Não contém nenhum Caixa cadastrado.";
 			}
 
 			stmt.close();
 		} catch (SQLException ex) {
 			ex.getStackTrace();
 			throw new RuntimeException(ex);
+		} finally {
+			minhaConexao.fecharConexao();
 		}
 		return caixaLista;
 	}
 
 	public boolean alterar(CaixaModel caixaModel) {
 		System.out.println("chamou alteraMarca");
-		String alter = "UPDATE fit_academia.caixa "
-				+ "SET data_entrada=?, data_saida=?, "
-				+ "valores_entrada=?, valores_saida=? "
-				+ "WHERE cod_caixa = ?;";
+		String alter = "UPDATE fit_academia.caixa " + "SET data_entrada=?, data_saida=?, "
+				+ "valores_entrada=?, valores_saida=? " + "WHERE cod_caixa = ?;";
 		boolean check;
 
 		try {

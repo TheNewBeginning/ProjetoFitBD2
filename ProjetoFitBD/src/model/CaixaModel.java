@@ -1,5 +1,8 @@
 package model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class CaixaModel {
 	private int cod_caixa;
 	private String data_entrada;
@@ -8,6 +11,12 @@ public class CaixaModel {
 	private double valores_saida;
 	
 	
+	
+	public CaixaModel(int cod_caixa) {
+		super();
+		this.cod_caixa = cod_caixa;
+	}
+
 	public CaixaModel(int cod_caixa, String data_entrada, String data_saida, double valores_entrada,
 			double valores_saida) {
 		super();
@@ -41,26 +50,21 @@ public class CaixaModel {
 		this.cod_caixa = cod_caixa;
 	}
 
-
 	public String getData_entrada() {
 		return data_entrada;
 	}
-
 
 	public void setData_entrada(String data_entrada) {
 		this.data_entrada = data_entrada;
 	}
 
-
 	public String getData_saida() {
 		return data_saida;
 	}
 
-
 	public void setData_saida(String data_saida) {
 		this.data_saida = data_saida;
 	}
-
 
 	public double getValores_entrada() {
 		return valores_entrada;
@@ -81,10 +85,10 @@ public class CaixaModel {
 		this.valores_saida = valores_saida;
 	}
 
-
 	@Override
 	public String toString() {
-		return "Caixa Model{" + "}";
+		return "CaixaModel [cod_caixa=" + cod_caixa + ", data_entrada=" + data_entrada + ", data_saida=" + data_saida
+				+ ", valores_entrada=" + valores_entrada + ", valores_saida=" + valores_saida + "]";
 	}
 
 }
